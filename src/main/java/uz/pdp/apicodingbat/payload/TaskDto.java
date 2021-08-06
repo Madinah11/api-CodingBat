@@ -11,5 +11,7 @@ public class TaskDto {
     private String method;
     private boolean hasStar;
     private Integer languageID;
+    private Integer categoryID;
+
 
 }

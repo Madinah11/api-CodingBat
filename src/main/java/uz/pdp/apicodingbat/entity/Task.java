@@ -34,6 +34,9 @@ public class Task {
     @ManyToOne
     private Language language;
 
+    @ManyToOne
+    private Category category;
+
 
 
 }

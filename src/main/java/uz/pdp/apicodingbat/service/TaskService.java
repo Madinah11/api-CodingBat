@@ -20,6 +20,8 @@ public class TaskService {
     TaskRepository taskRepository;
     @Autowired
     LanguageRepository languageRepository;
+    @Autowired
+    CategoryRepository  categoryRepository;
 
     /**
      * Vazifa qo'shadigan metod
@@ -33,7 +35,11 @@ public class TaskService {
         if (!optionalLanguage.isPresent())
             return new ApiResponse("Bunday til topilmadi ",false);
         Language language = optionalLanguage.get();
-        Task task=new Task(null,taskDto.getName(),taskDto.getCondition(),taskDto.getSolution(),taskDto.getHint(),taskDto.getMethod(),taskDto.isHasStar(),language);
+        Optional<Category> optionalCategory = categoryRepository.findById(taskDto.getCategoryID());
+        if(!optionalCategory.isPresent())
+            return new ApiResponse("Bunday kategoriya topilmadi ",false);
+        Category category = optionalCategory.get();
+        Task task=new Task(null,taskDto.getName(),taskDto.getCondition(),taskDto.getSolution(),taskDto.getHint(),taskDto.getMethod(),taskDto.isHasStar(),language,category);
         taskRepository.save(task);
         return new ApiResponse("Yangi vazifa saqlandi", true);
     }
@@ -89,6 +95,11 @@ public class TaskService {
         Optional<Language> optionalLanguage = languageRepository.findById(taskDto.getLanguageID());
         if (!optionalLanguage.isPresent())
             return new ApiResponse("Bunday til topilmadi ",false);
+        Optional<Category> optionalCategory = categoryRepository.findById(taskDto.getCategoryID());
+        if(!optionalCategory.isPresent())
+            return new ApiResponse("Bunday kategoriya topilmadi ",false);
+        Category category = optionalCategory.get();
+
         Language language = optionalLanguage.get();
         editingTask.setCondition(taskDto.getCondition());
         editingTask.setHint(taskDto.getHint());
@@ -97,6 +108,7 @@ public class TaskService {
         editingTask.setLanguage(language);
         editingTask.setSolution(taskDto.getSolution());
         editingTask.setMethod(taskDto.getMethod());
+        editingTask.setCategory(category);
         taskRepository.save(editingTask);
         return new ApiResponse("Tanlangan til turi tahrirlandi",true);
     }
