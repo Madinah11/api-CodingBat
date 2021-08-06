@@ -27,8 +27,11 @@ public class CategoryService {
         boolean existsByName = categoryRepository.existsByName(categoryDto.getName());
         if (existsByName)
             return new ApiResponse("Bunday kategoriya bazada mavjud. Boshqa kategoriya kiriting ",false);
-        List<Language> languageList = languageRepository.findAllById(categoryDto.getLanguageId());
-        Category category=new Category(null,categoryDto.getName(),categoryDto.getDescription(),languageList);
+        Optional<Language> optionalLanguage = languageRepository.findById(categoryDto.getLanguageId());
+        if (!optionalLanguage.isPresent())
+            return new ApiResponse("Bunday til bazadan topilmadi. ",false);
+        Language language = optionalLanguage.get();
+        Category category=new Category(null,categoryDto.getName(),categoryDto.getDescription(),language);
         categoryRepository.save(category);
         return new ApiResponse("Yangi kategoriya saqlandi", true);
     }
@@ -81,10 +84,13 @@ public class CategoryService {
         if (!optionalCategory.isPresent())
             return new ApiResponse("Bunday kategoriya turi topilmadi ",false);
         Category editingCategory = optionalCategory.get();
-        List<Language> languageList = languageRepository.findAllById(categoryDto.getLanguageId());
+        Optional<Language> optionalLanguage = languageRepository.findById(categoryDto.getLanguageId());
+        if (!optionalLanguage.isPresent())
+            return new ApiResponse("Bunday til bazadan topilmadi. ",false);
+        Language language = optionalLanguage.get();
         editingCategory.setName(categoryDto.getName());
         editingCategory.setDescription(categoryDto.getDescription());
-        editingCategory.setLanguage(languageList);
+        editingCategory.setLanguage(language);
         categoryRepository.save(editingCategory);
         return new ApiResponse("Tanlangan til turi tahrirlandi",true);
     }

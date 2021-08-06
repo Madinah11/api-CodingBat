@@ -21,6 +21,6 @@ public class Category {
 
     private String description;
 
-    @ManyToMany
-    private List<Language> language;
+    @ManyToOne
+    private Language language;
 }
